@@ -1,0 +1,31 @@
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Logs
+*.log
+error_log
+access_log
+
+# Cache files
+*.cache
+*.tmp
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Local configuration
+config.local.php 

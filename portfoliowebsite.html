@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOAH Team Portfolio</title>
+  <style>
+    /* Loading screen */
+    #loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('Technology.gif') no-repeat center center;
+      z-index: 9999;
+    }
+
+    .fade-out {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity s ease;
+    }
+
+    /* Main page styling */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('innovation.gif') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .back-home {
+    color: #ffffff;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid #FFFFFF;
+    background: #010d10;
+    backdrop-filter: blur(5px);
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .back-home:hover {
+    background: #fcd225;
+    transform: translateX(-2px);
+  }
+  
+  .back-home svg {
+    width: 20px;
+    height: 20px;
+    stroke: #FFFFFF;
+  }   
+
+    .team-member-link {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    header p {
+      margin: 10px 0 0;
+      font-size: 18px;
+      color: #ccc;
+    }
+
+    .team-section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .team-section h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .team-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .team-member {
+      background: url('Technology.gif');
+      background-size: cover;
+      border-radius: 12px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      width: 260px;
+      padding: 30px 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+      color: #08f7bb;
+    }
+
+    .team-member:hover {
+      transform: translateY(-8px);
+    }
+
+    .team-member img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid #1a1a1a;
+    }
+
+    .team-member h3 {
+      margin: 10px 0 5px;
+      font-size: 20px;
+    }
+
+    .team-member p.title {
+      font-weight: bold;
+      color: #007bff;
+      margin: 5px 0;
+    }
+
+    .team-member p.bio {
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    footer {
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+  <a href="website.html" class="back-home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        Back to Home
+    </a>
+
+  <!-- Loading Screen -->
+  <div id="loader"></div>
+
+  <!-- Main Content -->
+  <div class="overlay">
+    <header>
+      <h1>𝖬𝖾𝖾𝗍 𝗍𝗁𝖾 𝖭.𝖮.𝖠.𝖧 𝖳𝖾𝖺𝗆</h1>
+      <p>Student creators of Niche Object Affiliate & Handling (NOAH)</p>
+    </header>
+
+    <section class="team-section">
+      <h2>Our Portfolio</h2>
+      <div class="team-container">
+
+        <!-- NOAH -->
+        <a href="portfolios/Noah Capinpin (PORTFOLIO)/noah.html" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/Noah Capinpin (PORTFOLIO)/noah.jpg" alt="Noah Capinpin">
+            <h3>Noah Capinpin</h3>
+            <p class="title">Founder & Developer</p>
+            <p class="bio">Lead developer of the NOAH marketplace...</p>
+          </div>
+        </a>
+
+        <!-- JIRO -->
+        <a href="portfolios/JIRO CABRERA PORTFOLIO/jiro.htm" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/JIRO CABRERA PORTFOLIO/jiro.jpg" alt="Jiro Cabrera">
+            <h3>Jiro Adrich Cabrera</h3>
+            <p class="title">UI/UX Designer & Front End Developer</p>
+            <p class="bio">Designs smooth and friendly interfaces...</p>
+          </div>
+        </a>
+
+        <!-- ZYRUS -->
+        <a href="portfolios/Zyrus Pido (PORTFOLIO)/pido.html" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/Zyrus Pido (PORTFOLIO)/zyrus.jpg" alt="Zyrus Pido">
+            <h3>Zyrus Pido</h3>
+            <p class="title">Marketing & Community</p>
+            <p class="bio">Handles communications, student engagement...</p>
+          </div>
+        </a>
+
+        <!-- JB -->
+        <a href="portfolios/JB Rayo (PORTFOLIO)/rayo.html" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/JB Rayo (PORTFOLIO)/jb.jpg" alt="JB Rayo">
+            <h3>JB Rayo</h3>
+            <p class="title">Founder & Developer</p>
+            <p class="bio">Helps build and expand core NOAH functionality...</p>
+          </div>
+        </a>
+
+        <!-- AXEL -->
+        <a href="portfolios/Axel Magcamit (PORTFOLIO)/axel.html" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/Axel Magcamit (PORTFOLIO)/phil.jpg" alt="Axel Magcamit">
+            <h3>Axel Magcamit</h3>
+            <p class="title">Marketing & Community</p>
+            <p class="bio">Handles communications, student engagement...</p>
+          </div>
+        </a>
+
+        <!-- RAVEN -->
+        <a href="portfolios/Raven Quiapo (PORTFOLIO)/index.html" class="team-member-link">
+          <div class="team-member">
+            <img src="portfolios/Raven Quiapo (PORTFOLIO)/raven.png" alt="Raven Quiapo">
+            <h3>Raven Quiapo</h3>
+            <p class="title">Founder & Developer</p>
+            <p class="bio">Contributes to development and overall site management...</p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 NOAH Team. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Fade-out Script -->
+  <script>
+    window.addEventListener("load", function () {
+      const loader = document.getElementById("loader");
+      loader.classList.add("fade-out");
+      setTimeout(() => {
+        loader.style.display = "none";
+      }, 500);
+    });
+  </script>
+
+</body>
+</html>
