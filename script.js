@@ -235,31 +235,41 @@ document.getElementById("checkout-form").addEventListener("submit", function(eve
 
 // Fetch and display products from backend
 function loadAllProducts() {
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = '<p>Loading products...</p>';
+
     fetch('backend/get_products.php')
         .then(response => response.json())
-        .then(products => {
-            console.log('Fetched products:', products); // DEBUG LOG
-            const productList = document.getElementById('product-list');
+        .then(data => {
             productList.innerHTML = '';
-            if (products.length === 0) {
-                productList.innerHTML = '<p>No products available.</p>';
-                return;
+            
+            if (data.success) {
+                if (data.products.length > 0) {
+                    data.products.forEach(product => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'product';
+                        productDiv.setAttribute('data-product-id', product.id);
+                        productDiv.innerHTML = `
+                            <img src="${product.image_path || 'placeholder.jpg'}" alt="${product.name}">
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p>Price: ₱${product.price}</p>
+                                <button onclick="addToCart('${product.name}', ${product.price}, ${product.id})">Add to Cart</button>
+                            </div>
+                        `;
+                        productList.appendChild(productDiv);
+                    });
+                } else {
+                    productList.innerHTML = '<p>No products available.</p>';
+                }
+            } else {
+                productList.innerHTML = `<p>Error loading products: ${data.message}</p>`;
+                console.error('Error:', data.message);
             }
-            products.forEach(product => {
-                const productDiv = document.createElement('div');
-                productDiv.className = 'product';
-                productDiv.innerHTML = `
-                    <img src="${product.image_path ? product.image_path : 'book1.jpg'}" alt="${product.name}" onerror="this.onerror=null;this.src='book1.jpg';">
-                    <h3>${product.name}</h3>
-                    <p>Price: ₱${product.price}</p>
-                    <button onclick="addToCart('${product.name}', ${product.price}, ${product.id})">Add to Cart</button>
-                `;
-                productList.appendChild(productDiv);
-            });
         })
         .catch(error => {
-            console.error('Error loading products:', error);
-            document.getElementById('product-list').innerHTML = '<p>Error loading products: ' + error + '</p>';
+            console.error('Error:', error);
+            productList.innerHTML = '<p>Error loading products. Please try again later.</p>';
         });
 }
 
@@ -402,26 +412,9 @@ function cancelOrder(orderId) {
     });
 }
 
-// Function to open edit mode for a product
-function editProduct(productId, currentName, currentPrice) {
-    const productDiv = document.querySelector(`[data-product-id="${productId}"]`);
-    const editForm = document.createElement('div');
-    editForm.className = 'edit-form';
-    editForm.innerHTML = `
-        <input type="text" class="edit-name" value="${currentName}" maxlength="40" placeholder="Product Name">
-        <input type="number" class="edit-price" value="${currentPrice}" min="0" max="999999" placeholder="Price">
-        <div class="edit-buttons">
-            <button onclick="saveProductChanges(${productId})" class="save-btn">Save</button>
-            <button onclick="cancelEdit(${productId})" class="cancel-btn">Cancel</button>
-        </div>
-    `;
-    productDiv.querySelector('.product-info').style.display = 'none';
-    productDiv.appendChild(editForm);
-}
-
 // Function to save product changes
 function saveProductChanges(productId) {
-    const productDiv = document.querySelector(`[data-product-id="${productId}"]`);
+    const productDiv = document.querySelector(`#user-products [data-product-id="${productId}"]`);
     const newName = productDiv.querySelector('.edit-name').value.trim();
     const newPrice = productDiv.querySelector('.edit-price').value;
 
@@ -442,7 +435,26 @@ function saveProductChanges(productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            loadUserProducts(); // Refresh the product list
+            // Update only in the user's product view
+            const productInfo = productDiv.querySelector('.product-info');
+            productInfo.innerHTML = `
+                <h3>${newName}</h3>
+                <p>Price: ₱${newPrice}</p>
+                <div class="product-actions">
+                    <button onclick="editProduct(${productId}, '${newName}', ${newPrice})" class="edit-btn">Edit</button>
+                    <button onclick="deleteProduct(${productId})" class="delete-btn">Delete</button>
+                </div>
+            `;
+            productInfo.style.display = 'block';
+            
+            // Remove the edit form
+            const editForm = productDiv.querySelector('.edit-form');
+            if (editForm) {
+                editForm.remove();
+            }
+
+            // Refresh the main product list to get updated data
+            loadAllProducts();
         } else {
             alert('Error updating product: ' + (data.message || 'Unknown error'));
         }
@@ -453,10 +465,34 @@ function saveProductChanges(productId) {
     });
 }
 
+// Function to edit product
+function editProduct(productId, currentName, currentPrice) {
+    const productDiv = document.querySelector(`#user-products [data-product-id="${productId}"]`);
+    if (!productDiv) return; // Exit if product not found in user's products section
+    
+    const editForm = document.createElement('div');
+    editForm.className = 'edit-form';
+    editForm.innerHTML = `
+        <input type="text" class="edit-name" value="${currentName}" maxlength="40" placeholder="Product Name">
+        <input type="number" class="edit-price" value="${currentPrice}" min="0" max="999999" placeholder="Price">
+        <div class="edit-buttons">
+            <button onclick="saveProductChanges(${productId})" class="save-btn">Save</button>
+            <button onclick="cancelEdit(${productId})" class="cancel-btn">Cancel</button>
+        </div>
+    `;
+    productDiv.querySelector('.product-info').style.display = 'none';
+    productDiv.appendChild(editForm);
+}
+
 // Function to cancel edit mode
 function cancelEdit(productId) {
-    const productDiv = document.querySelector(`[data-product-id="${productId}"]`);
-    productDiv.querySelector('.edit-form').remove();
+    const productDiv = document.querySelector(`#user-products [data-product-id="${productId}"]`);
+    if (!productDiv) return; // Exit if product not found
+    
+    const editForm = productDiv.querySelector('.edit-form');
+    if (editForm) {
+        editForm.remove();
+    }
     productDiv.querySelector('.product-info').style.display = 'block';
 }
 

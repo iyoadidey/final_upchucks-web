@@ -4,26 +4,44 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once 'config.php';
 
-// Create connection
-$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+$response = array(
+    'success' => false,
+    'message' => '',
+    'products' => array()
+);
 
-// Check connection
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(["error" => "Connection failed: " . $conn->connect_error]);
-    exit();
-}
+try {
+    // Create connection
+    $conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
-$sql = "SELECT * FROM products";
-$result = $conn->query($sql);
-
-$products = [];
-if ($result && $result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $products[] = $row;
+    // Check connection
+    if ($conn->connect_error) {
+        $response['message'] = "Connection failed: " . $conn->connect_error;
+        echo json_encode($response);
+        exit();
     }
+
+    $sql = "SELECT * FROM products ORDER BY created_at DESC";
+    $result = $conn->query($sql);
+
+    if ($result === false) {
+        $response['message'] = "Query failed: " . $conn->error;
+    } else {
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()) {
+                $response['products'][] = $row;
+            }
+            $response['success'] = true;
+            $response['message'] = "Products retrieved successfully";
+        } else {
+            $response['success'] = true;
+            $response['message'] = "No products found";
+        }
+    }
+
+    $conn->close();
+} catch (Exception $e) {
+    $response['message'] = "Error: " . $e->getMessage();
 }
 
-echo json_encode($products);
-
-$conn->close(); 
+echo json_encode($response); 

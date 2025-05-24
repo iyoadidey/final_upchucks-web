@@ -1,68 +1,68 @@
 <?php
-// Database configuration
-$servername = "localhost";
-$username = "root";
-$password = "";
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
-echo "<h2>Database Connection Test</h2>";
+require_once 'config.php';
 
-// Test database connection
+$response = array(
+    'database_connection' => false,
+    'database_exists' => false,
+    'users_table_exists' => false,
+    'error' => null
+);
+
 try {
-    $conn = new mysqli($servername, $username, $password);
-    echo "<p style='color: green;'>✅ Successfully connected to MySQL server</p>";
-    
-    // Create database if it doesn't exist
-    $sql = "CREATE DATABASE IF NOT EXISTS upchucks_db";
-    if ($conn->query($sql) === TRUE) {
-        echo "<p style='color: green;'>✅ Database 'upchucks_db' created or already exists</p>";
+    // Test basic connection
+    $test_conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD);
+    $response['database_connection'] = true;
+
+    // Check if database exists
+    $result = $test_conn->query("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '" . DB_NAME . "'");
+    $response['database_exists'] = ($result && $result->num_rows > 0);
+
+    // Select the database
+    if ($response['database_exists']) {
+        $test_conn->select_db(DB_NAME);
         
-        // Select the database
-        $conn->select_db("upchucks_db");
-        
-        // Create users table if it doesn't exist
-        $sql = "CREATE TABLE IF NOT EXISTS users (
-            id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-            first_name VARCHAR(50) NOT NULL,
-            last_name VARCHAR(50) NOT NULL,
-            email VARCHAR(100) NOT NULL UNIQUE,
-            password VARCHAR(255) NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )";
-        
-        if ($conn->query($sql) === TRUE) {
-            echo "<p style='color: green;'>✅ Table 'users' created or already exists</p>";
+        // Check if users table exists
+        $result = $test_conn->query("SHOW TABLES LIKE 'users'");
+        $response['users_table_exists'] = ($result && $result->num_rows > 0);
+
+        // If users table doesn't exist, create it
+        if (!$response['users_table_exists']) {
+            $sql = "CREATE TABLE users (
+                id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                first_name VARCHAR(50) NOT NULL,
+                last_name VARCHAR(50) NOT NULL,
+                email VARCHAR(100) NOT NULL UNIQUE,
+                password VARCHAR(255) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )";
             
-            // Show table structure
-            $result = $conn->query("DESCRIBE users");
-            echo "<h3>Table Structure:</h3>";
-            echo "<table border='1' style='border-collapse: collapse; width: 100%;'>";
-            echo "<tr style='background-color: #f2f2f2;'>";
-            echo "<th>Field</th>";
-            echo "<th>Type</th>";
-            echo "<th>Null</th>";
-            echo "<th>Key</th>";
-            echo "<th>Default</th>";
-            echo "</tr>";
-            
-            while($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>" . htmlspecialchars($row['Field']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['Type']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['Null']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['Key']) . "</td>";
-                echo "<td>" . htmlspecialchars($row['Default']) . "</td>";
-                echo "</tr>";
+            if ($test_conn->query($sql)) {
+                $response['users_table_exists'] = true;
+                $response['message'] = 'Users table created successfully';
+            } else {
+                throw new Exception('Error creating users table: ' . $test_conn->error);
             }
-            echo "</table>";
-        } else {
-            echo "<p style='color: red;'>❌ Error creating table: " . $conn->error . "</p>";
         }
     } else {
-        echo "<p style='color: red;'>❌ Error creating database: " . $conn->error . "</p>";
+        // Create database if it doesn't exist
+        if ($test_conn->query("CREATE DATABASE " . DB_NAME)) {
+            $response['database_exists'] = true;
+            $response['message'] = 'Database created successfully';
+        } else {
+            throw new Exception('Error creating database: ' . $test_conn->error);
+        }
     }
+
 } catch (Exception $e) {
-    echo "<p style='color: red;'>❌ Connection failed: " . $e->getMessage() . "</p>";
+    $response['error'] = $e->getMessage();
+} finally {
+    if (isset($test_conn)) {
+        $test_conn->close();
+    }
 }
 
-$conn->close();
+echo json_encode($response, JSON_PRETTY_PRINT);
 ?> 

@@ -45,6 +45,21 @@ if (mysqli_query($conn, $sql)) {
     if (!mysqli_query($conn, $sql)) {
         die("Error creating table: " . mysqli_error($conn));
     }
+
+    // Create products table
+    $sql = "CREATE TABLE IF NOT EXISTS products (
+        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(40) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        image_path VARCHAR(255),
+        seller_id INT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (seller_id) REFERENCES users(id)
+    )";
+
+    if (!mysqli_query($conn, $sql)) {
+        die("Error creating table: " . mysqli_error($conn));
+    }
 } else {
     die("Error creating database: " . mysqli_error($conn));
 }
