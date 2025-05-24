@@ -58,9 +58,4 @@ A web-based marketplace platform for students to buy and sell products and servi
 ├── website.html
 └── README.md
 ```
-
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 # final_upchucks-web
